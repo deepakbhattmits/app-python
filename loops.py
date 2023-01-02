@@ -11,3 +11,5 @@ def get_input():
 # using for loop
 for element in list:
     print(element,'->',get_input())
+else:
+    print('-' * 20)
