@@ -11,3 +11,6 @@ else:
 
 text_str='cello'
 print(text_str)
+
+char=['ABS','XYZ']
+ 
