@@ -1,3 +1,5 @@
+from hashlib import sha256
+
 name='ABC'
 age=20
 
@@ -34,3 +36,7 @@ print("Hello, {name}. You are {age}.".format(** person))
 list =[1,2,3,4,5]
 
 print("List have {}, {}, {} and {}".format(*list))
+
+hashed_var= sha256(name.encode()).hexdigest()
+print("hashed_var : ",hashed_var)
+
