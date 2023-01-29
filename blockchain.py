@@ -1,6 +1,7 @@
 
 from functools import reduce
 from json import dumps, loads
+# from pickle import dumps, loads
 from collections import OrderedDict
 
 
@@ -20,42 +21,64 @@ participants ={owner}
 
 
 def load_data():
-    with open('blockchain.txt',mode='r') as f:
-        file_contents = f.readlines()
-        global blockchain, open_transactions
-        blockchain = loads(file_contents[0][:-1])
-        updated_blockchain=[]
-        for block in blockchain:
-            updated_block={
-                    'previous_hash':block['previous_hash'],
-                    'index':block['index'],
-                    'proof':block['proof'],
-                    'transactions':[OrderedDict([
-                        ('sender',tx['sender']),
-                        ('recipient',tx['recipient']),
-                        ('amount',tx['amount'])]) for tx in block['transactions']]
-                }
-            updated_blockchain.append(updated_block)
-        blockchain= updated_blockchain
-        open_transactions = loads(file_contents[1])
 
-        updated_open_transactions=[]
-        for tx in open_transactions:
-            updated_open_transaction=OrderedDict([
-                        ('sender',tx['sender']),
-                        ('recipient',tx['recipient']),
-                        ('amount',tx['amount'])]) 
-            updated_open_transactions.append(updated_open_transaction)
-        open_transactions= updated_open_transactions
+    # with open('blockchain.p',mode='rb') as f:
+    #     file_contents = loads(f.read())
+    #     global blockchain, open_transactions
+    #     blockchain= file_contents['chain']
+    #     open_transactions =file_contents['ot']
+    try:
+        with open('blockchain.txt',mode='r') as f:
+            file_contents = f.readlines()
+            global blockchain, open_transactions
+            blockchain = loads(file_contents[0][:-1])
+            updated_blockchain=[]
+            for block in blockchain:
+                updated_block={
+                        'previous_hash':block['previous_hash'],
+                        'index':block['index'],
+                        'proof':block['proof'],
+                        'transactions':[OrderedDict([
+                            ('sender',tx['sender']),
+                            ('recipient',tx['recipient']),
+                            ('amount',tx['amount'])]) for tx in block['transactions']]
+                    }
+                updated_blockchain.append(updated_block)
+            blockchain= updated_blockchain
+            open_transactions = loads(file_contents[1])
+
+            updated_open_transactions=[]
+            for tx in open_transactions:
+                updated_open_transaction=OrderedDict([
+                            ('sender',tx['sender']),
+                            ('recipient',tx['recipient']),
+                            ('amount',tx['amount'])]) 
+                updated_open_transactions.append(updated_open_transaction)
+            open_transactions= updated_open_transactions
+    except IOError:
+        print('File not found !')
+    finally:
+        print('Cleanup')
 
 load_data()
 
 
 def save_data():
-    with open('blockchain.txt',mode='w') as f:
-        f.write(dumps(blockchain))
-        f.write('\n')
-        f.write(dumps(open_transactions))
+    try:    
+        with open('blockchain.txt',mode='w') as f:
+            f.write(dumps(blockchain))
+            f.write('\n')
+            f.write(dumps(open_transactions))
+        # with open('blockchain.p',mode='wb') as f:
+        #     save_data= {
+        #         'chain':blockchain,
+        #         'ot':open_transactions
+        #     }
+        #     f.write(dumps(save_data))
+    except IOError:
+        print('Saving failed !')
+    finally:
+        print('Cleanup!')
 
 
 def sender_balance(participant):
